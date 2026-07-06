@@ -5,7 +5,7 @@
 #
 # Usage:
 #   ./deploy.sh [host] [port] [user]
-#   ./deploy.sh                     # defaults: your-vm-ip:22 art
+#   ./deploy.sh                     # defaults: your-vm-ip:22 your-user
 #   ./deploy.sh 10.0.0.5 2222 root  # custom host/port/user
 #
 # Options (pass after positional args):
@@ -29,7 +29,7 @@ set -euo pipefail
 
 REMOTE_HOST="${1:-your-vm-ip}"
 REMOTE_PORT="${2:-22}"
-REMOTE_USER="${3:-art}"
+REMOTE_USER="${3:-your-user}"
 SSH_KEY="${SSH_KEY:-$HOME/.ssh/id_ed25519}"
 REMOTE_DIR="${REMOTE_DIR:-/opt/emulation_agent}"
 AGENT_PORT="${AGENT_PORT:-9100}"
