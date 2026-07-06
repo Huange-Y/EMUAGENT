@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x *)",
+      "Bash(dpkg -l)",
+      "Bash(pip3 list *)",
+      "Bash(mkdir -p /tmp/firmware_test)",
+      "Read(//tmp/**)",
+      "Bash(wget -q --no-check-certificate \"https://downloads.openwrt.org/releases/23.05.4/targets/ramips/mt7621/openwrt-23.05.4-ramips-mt7621-tplink_archer-c6u-v3-squashfs-sysupgrade.bin\" -O openwrt_mips_tplink.bin)",
+      "Bash(qemu-mips-static -L /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root/bin/busybox uname -a)",
+      "Bash(qemu-mips-static -L /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root/bin/busybox id)",
+      "Bash(qemu-mips-static -L /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root/bin/busybox cat /etc/banner)",
+      "Bash(timeout 10 qemu-mips-static -L /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root /tmp/firmware_test/extracted/_openwrt_mips.bin.extracted/squashfs-root/usr/sbin/uhttpd -f -h /www -p 0.0.0.0:9977)"
+    ]
+  }
+}

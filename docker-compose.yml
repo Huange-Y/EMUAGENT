@@ -1,0 +1,76 @@
+version: '3.8'
+
+# =============================================================================
+# Emulation Agent — Docker Compose stack
+# =============================================================================
+# Start:  docker compose up -d
+# Stop:   docker compose down
+# Logs:   docker compose logs -f
+# =============================================================================
+
+services:
+  emulation-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: emulation-agent
+    ports:
+      - "9100:9100"
+    volumes:
+      # Persist uploaded rootfs across container restarts
+      - ./data/rootfs:/data/rootfs
+      # Persist service logs
+      - ./data/logs:/data/logs
+      # NVRAM configuration templates
+      - ./data/nvram_templates:/data/nvram_templates
+    environment:
+      - EMU_ROOTFS_DIR=/data/rootfs
+      - EMU_MAX_TIMEOUT=120
+      - EMU_LOG_LEVEL=INFO
+    restart: unless-stopped
+    # QEMU needs ptrace for user-mode emulation
+    cap_add:
+      - SYS_PTRACE
+    # QEMU user-mode calls seccomp-restricted syscalls (e.g. clone, personality)
+    security_opt:
+      - seccomp:unconfined
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+          cpus: '4'
+        reservations:
+          memory: 512m
+          cpus: '1'
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:9100/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - emulation-net
+
+  # -------------------------------------------------------------------
+  # Optional: Nginx reverse proxy with HTTPS (uncomment to enable)
+  # -------------------------------------------------------------------
+  # nginx-proxy:
+  #   image: nginx:alpine
+  #   container_name: emu-nginx
+  #   ports:
+  #     - "443:443"
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/certs:/etc/nginx/certs:ro
+  #   depends_on:
+  #     - emulation-agent
+  #   networks:
+  #     - emulation-net
+
+networks:
+  emulation-net:
+    driver: bridge
+    name: emulation-net

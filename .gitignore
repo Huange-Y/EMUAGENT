@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.log
+.env
+.qqbot.env
+*.egg-info/
+tmp/
+fw_workspace/
+workspace/
